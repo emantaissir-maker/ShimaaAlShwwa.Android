@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Simple Android APK
 
 on:
   push:
@@ -19,20 +19,15 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build Web App / APK
+    - name: Create Web App Package
       run: |
-        echo "Building Android application..."
-        # أضف أوامر البناء هنا حسب محتوى مشروعك
-        mkdir -p build
-        echo "App built successfully"
+        echo "Preparing web files for the app..."
+        mkdir -p app-output
+        cp index.html app-output/ || true
+        cp original-index.html app-output/ || true
 
-    - name: Upload APK Artifact
+    - name: Upload Web Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: app-release
-        path: |
-          *.apk
-          build/
-          *.html
-          *.js
-          *.css
+        name: Shimaa-App-Package
+        path: app-output/
