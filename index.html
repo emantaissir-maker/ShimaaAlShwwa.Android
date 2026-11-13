@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#087f78">
+<title>الخطة الشهرية للأنشطة التربوية</title>
+
+<!-- PDF في تطبيق Android يتم عبر خدمة الطباعة المحلية؛ لا حاجة لمكتبة خارجية -->
+
+<style>
+:root{
+  --teal:#087f78;
+  --dark:#075b56;
+  --light:#edf7f5;
+  --border:#d9e6e3;
+  --white:#fff;
+  --red:#bd414d;
+  --text:#31504c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f0f6f5;
+  color:var(--text);
+}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+
+/* شاشة الترحيب */
+#welcome-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  background:#263d40d9;
+  backdrop-filter:blur(8px);
+  overflow:hidden;
+}
+/* الفقاعات المتحركة */
+.bubble{
+  position:absolute;
+  bottom:-120px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#2fb3a4aa,#087f7855);
+  border:1px solid #2fb3a455;
+  pointer-events:none;
+  z-index:0;
+  animation:floatUp linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(0) translateX(0) scale(.8);opacity:0}
+  10%{opacity:1}
+  50%{transform:translateY(-55vh) translateX(25px) scale(1)}
+  100%{transform:translateY(-120vh) translateX(-25px) scale(1.2);opacity:0}
+}
+.welcome-card{
+  width:100%;
+  max-width:540px;
+  padding:48px 26px 40px;
+  text-align:center;
+  background:#fbfffe;
+  border-radius:28px;
+  box-shadow:0 18px 55px #0004;
+  position:relative;
+  overflow:hidden;
+  z-index:1;
+}
+.welcome-card:before{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  background:#d9f3ee;
+  border-radius:50%;
+  top:-85px;
+  left:-25px;
+}
+.welcome-card:after{
+  content:"";
+  position:absolute;
+  width:150px;
+  height:150px;
+  background:#f0e8fa;
+  border-radius:50%;
+  bottom:-85px;
+  right:-35px;
+}
+.welcome-content{position:relative;z-index:1}
+.flower{
+  width:92px;
+  height:92px;
+  margin:0 auto 20px;
+  border-radius:28px;
+  background:#edf7f5;
+  display:grid;
+  place-items:center;
+  font-size:50px;
+  box-shadow:0 4px 15px #075b5618;
+}
+.welcome-card h2{
+  color:var(--dark);
+  font-size:27px;
+  margin:14px 0;
+}
+.welcome-card p{
+  font-size:16px;
+  line-height:2;
+  color:#6f827f;
+}
+.welcome-buttons{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:26px;
+}
+.btn{
+  border:0;
+  border-radius:14px;
+  padding:16px 24px;
+  font-size:17px;
+  font-weight:bold;
+}
+.btn-main{
+  color:white;
+  background:linear-gradient(120deg,#08756e,#22a58f);
+}
+.btn-light{
+  background:#e5f4f0;
+  color:var(--dark);
+}
+
+/* رأس الصفحة */
+header{
+  background:linear-gradient(120deg,#075b56,#09877e);
+  color:white;
+  text-align:center;
+  padding:22px 12px;
+}
+header h1{font-size:23px;margin:0 0 8px}
+header p{font-size:13px;margin:5px 0;color:#e0f4f0}
+
+/* محتوى الصفحة */
+.container{
+  max-width:1500px;
+  margin:18px auto;
+  padding:0 10px 25px;
+}
+.main-card{
+  background:white;
+  border-radius:15px;
+  padding:12px;
+  box-shadow:0 4px 18px #244d4610;
+}
+.info-panel{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  padding:8px 4px 16px;
+}
+.info-field label{
+  display:block;
+  font-size:12px;
+  margin-bottom:6px;
+  color:#55736e;
+  font-weight:bold;
+}
+.info-field input{
+  width:100%;
+  border:1px solid #d8e3e0;
+  border-radius:9px;
+  padding:11px;
+  color:#34534e;
+  background:#fff;
+  font-size:13px;
+}
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:9px;
+  margin:12px 0;
+}
+.action-btn{
+  border:0;
+  border-radius:10px;
+  padding:12px 16px;
+  background:var(--teal);
+  color:white;
+  font-size:13px;
+  font-weight:bold;
+}
+.action-btn.red{background:var(--red)}
+.action-btn.save{background:#7a4fb5}
+.action-btn:disabled{opacity:.6}
+
+/* الجدول */
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:white;
+  -webkit-overflow-scrolling:touch;
+}
+table{
+  width:100%;
+  min-width:1050px;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+thead th{
+  background:#087f78;
+  color:white;
+  font-size:12px;
+  padding:13px 6px;
+  line-height:1.6;
+  border:1px solid #ffffff55;
+}
+tbody td{
+  border:1px solid #dce7e4;
+  padding:6px;
+  vertical-align:top;
+  background:#fff;
+}
+tbody tr:nth-child(even) td:not(.week-cell):not(.number-cell){
+  background:#fcfefe;
+}
+.number-cell{
+  width:45px;
+  text-align:center;
+  vertical-align:middle!important;
+  color:#176c64;
+  font-weight:bold;
+  background:#f5faf9!important;
+}
+.week-cell{
+  width:85px;
+  text-align:center;
+  vertical-align:middle!important;
+  background:#edf7f5!important;
+  color:#17665f;
+  font-weight:bold;
+  font-size:13px;
+  line-height:1.8;
+  border:1px solid #dce7e4;
+}
+td .field-wrap{
+  display:flex;
+  align-items:flex-start;
+  gap:5px;
+}
+/* الخانة تتمدد حسب النص */
+td textarea{
+  width:100%;
+  min-width:0;
+  min-height:66px;
+  height:66px;
+  resize:none;
+  overflow:hidden;
+  white-space:pre-wrap;
+  word-break:break-word;
+  padding:8px;
+  border:1px solid #e0e8e6;
+  border-radius:8px;
+  outline:none;
+  background:white;
+  color:#344f4b;
+  font-size:12px;
+  line-height:1.7;
+}
+td textarea:focus{
+  border-color:#53aaa0;
+  box-shadow:0 0 0 2px #087f7815;
+}
+.mic-btn{
+  flex:0 0 27px;
+  width:27px;
+  height:27px;
+  border:0;
+  border-radius:50%;
+  background:#e4f4f0;
+  color:#345c56;
+  font-size:14px;
+  padding:0;
+}
+.delete-cell{
+  text-align:center;
+  vertical-align:middle;
+}
+.delete-btn{
+  background:#bd414d;
+  color:white;
+  border:0;
+  padding:7px;
+  border-radius:7px;
+  font-size:11px;
+}
+.note{
+  color:#718581;
+  font-size:11px;
+  line-height:1.9;
+  margin:15px 5px;
+}
+.footer{
+  text-align:center;
+  color:#82928f;
+  font-size:12px;
+  padding:15px 5px;
+  line-height:2;
+}
+#save-status{
+  text-align:center;
+  font-size:12px;
+  color:#268176;
+  margin:8px 0;
+}
+
+/* PDF */
+.pdf-loading{
+  opacity:.65;
+  pointer-events:none;
+}
+@media(max-width:600px){
+  header h1{font-size:19px}
+  .container{padding:0 8px 20px;margin:10px auto}
+  .main-card{padding:8px}
+  .info-panel{gap:8px}
+  .action-btn{padding:11px 12px;font-size:12px}
+  table{min-width:1050px}
+  .welcome-card h2{font-size:24px}
+}
+
+/* تنسيق نسخة PDF */
+.pdf-mode{
+  background:white!important;
+  padding:12px!important;
+  width:1200px!important;
+}
+.pdf-mode .table-wrapper{overflow:visible!important}
+.pdf-mode table{width:100%!important;min-width:0!important}
+.pdf-mode td textarea{
+  font-size:10px!important;
+  min-height:55px!important;
+  resize:none!important;
+  border:0!important;
+  background:transparent!important;
+  color:#233!important;
+  overflow:visible!important;
+}
+.pdf-mode .mic-btn,
+.pdf-mode .delete-cell,
+.pdf-mode .delete-col,
+.pdf-mode .toolbar,
+.pdf-mode #save-status{
+  display:none!important;
+}
+.pdf-mode .info-field input{
+  border:1px solid #ddd;
+}
+
+/* شاشة الاحتفال */
+#celebration-screen{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:#1c2f31cc;
+  backdrop-filter:blur(6px);
+  overflow:hidden;
+}
+#celebration-screen.show{display:flex}
+.celebration-card{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:460px;
+  padding:34px 22px;
+  text-align:center;
+  background:linear-gradient(160deg,#ffffff,#eefaf7);
+  border-radius:28px;
+  box-shadow:0 20px 60px #0005;
+  animation:pop .6s cubic-bezier(.2,1.5,.4,1);
+}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.celebration-emojis{margin:8px 0}
+.celebration-emojis span{
+  display:inline-block;
+  font-size:42px;
+  margin:0 7px;
+  animation:bounce 1s ease-in-out infinite;
+}
+.celebration-emojis span:nth-child(2){animation-delay:.2s}
+.celebration-emojis span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-16px) rotate(12deg) scale(1.15)}
+}
+.celebration-title{
+  font-size:30px;
+  font-weight:800;
+  color:var(--teal);
+  margin:10px 0 4px;
+  animation:glow 1.6s ease-in-out infinite;
+}
+@keyframes glow{50%{transform:scale(1.06)}}
+.celebration-name{
+  font-size:26px;
+  font-weight:bold;
+  color:#7a4fb5;
+  margin:6px 0 12px;
+}
+.celebration-message{
+  font-size:16px;
+  line-height:2;
+  color:#5b706d;
+  margin:0 0 16px;
+}
+.celebration-close{
+  border:0;
+  border-radius:14px;
+  padding:14px 34px;
+  font-size:17px;
+  font-weight:bold;
+  color:#fff;
+  background:linear-gradient(120deg,#08756e,#22a58f);
+}
+.confetti{
+  position:absolute;
+  top:-60px;
+  z-index:1;
+  pointer-events:none;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(115vh) rotate(360deg)}
+}
+</style>
+</head>
+
+<body>
+
+<!-- الترحيب -->
+<section id="welcome-modal">
+  <div class="welcome-card">
+    <div class="welcome-content">
+      <div class="flower">🌷</div>
+      <h2>أهلاً وسهلاً بكِ أستاذة شيماء</h2>
+      <p>
+        سعداء بوجودك معنا. نتمنى لكِ عملاً تربوياً ملهماً
+        وخطة شهرية مليئة بالإبداع والإنجاز.
+      </p>
+      <div class="welcome-buttons">
+        <button class="btn btn-main" onclick="beginWork()">
+          ✨ ابدئي العمل
+        </button>
+        <button class="btn btn-light" onclick="listenWelcome()">
+          🔊 استمعي للترحيب
+        </button>
+      </div>
+      <p style="font-size:13px">اضغطي على زر الاستماع لتشغيل رسالة الترحيب الصوتية.</p>
+    </div>
+  </div>
+</section>
+
+<!-- شاشة الاحتفال -->
+<div id="celebration-screen">
+  <div class="celebration-card">
+    <div class="celebration-emojis">
+      <span>✨</span>
+      <span>🥳</span>
+      <span>❤‍🔥</span>
+    </div>
+
+    <div class="celebration-title">يعطيكي الف عافيه</div>
+    <div class="celebration-name">خالتي شيموو ✨❤</div>
+
+    <p class="celebration-message">
+      تم حفظ خطتكِ بنجاح!
+      <br>
+      تستاهلي كل الحب والتقدير يا مبدعة 🌸
+    </p>
+
+    <div class="celebration-emojis">
+      <span>💜</span>
+      <span>🌸</span>
+      <span>💗</span>
+    </div>
+
+    <button class="celebration-close" onclick="closeCelebration()">شكراً ❤️</button>
+  </div>
+</div>
+
+<header>
+  <h1>الخطة الشهرية للأنشطة التربوية</h1>
+  <p>إعداد وتنظيم الأنشطة التربوية الشهرية</p>
+  <p>الأستاذة شيماء أحمد حمدي الشوا</p>
+</header>
+
+<main class="container">
+<div class="main-card" id="pdf-area">
+
+  <div class="info-panel">
+    <div class="info-field">
+      <label>الشهر</label>
+      <input id="month" type="text" placeholder="مثال: يوليو">
+    </div>
+    <div class="info-field">
+      <label>السنة</label>
+      <input id="year" type="text" placeholder="مثال: 2026">
+    </div>
+    <div class="info-field">
+      <label>اسم الميسرة</label>
+      <input id="facilitator" type="text" value="شيماء أحمد حمدي الشوا">
+    </div>
+    <div class="info-field">
+      <label>المؤسسة / المركز</label>
+      <input id="center" type="text" placeholder="اسم المؤسسة">
+    </div>
+  </div>
+
+  <div id="save-status">✓ الحفظ التلقائي مفعّل</div>
+
+  <div class="toolbar" data-html2canvas-ignore="true">
+    <button class="action-btn save" onclick="savePlan()">💾 حفظ الخطة</button>
+    <button class="action-btn" onclick="addWeek()">＋ إضافة أسبوع جديد (5 صفوف)</button>
+    <button class="action-btn" onclick="addActivity()">＋ إضافة نشاط</button>
+    <button class="action-btn red" id="pdf-button" onclick="downloadPDF()">⬇ حفظ كملف PDF</button>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="activities-table">
+      <thead>
+        <tr>
+          <th style="width:45px">#</th>
+          <th style="width:85px">الأسبوع</th>
+          <th style="width:90px">الوقت</th>
+          <th style="width:145px">اسم النشاط</th>
+          <th style="width:150px">الهدف من النشاط</th>
+          <th style="width:175px">وصف النشاط</th>
+          <th style="width:125px">الأدوات والمواد</th>
+          <th style="width:130px">الاستراتيجيات</th>
+          <th style="width:125px">أساليب التقويم</th>
+          <th style="width:125px">إدارة الصفوف</th>
+          <th class="delete-col" style="width:55px" data-html2canvas-ignore="true">حذف</th>
+        </tr>
+      </thead>
+      <tbody id="activities-body"></tbody>
+    </table>
+  </div>
+
+  <p class="note">
+    ملاحظة للإدخال الصوتي: استخدمي متصفح Chrome واسمحي بالوصول إلى
+    الميكروفون. يتطلب التعرف الصوتي اتصالاً بالإنترنت في بعض المتصفحات.
+  </p>
+
+  <div class="toolbar" data-html2canvas-ignore="true">
+    <button class="action-btn save" onclick="savePlan()">💾 حفظ الخطة</button>
+    <button class="action-btn" onclick="addWeek()">＋ إضافة أسبوع جديد (5 صفوف)</button>
+    <button class="action-btn red" onclick="downloadPDF()">⬇ حفظ / تنزيل PDF</button>
+  </div>
+
+  <div class="footer">
+    إعداد الخطة الشهرية للأنشطة التربوية
+    <br>
+    تصميم وبرمجة المهندس والمبرمج أسعد
+  </div>
+</div>
+</main>
+
+<script>
+const KEY='shaim_monthly_plan_v3';
+
+const fields=[
+  'time','title','goal','description',
+  'tools','strategies','evaluation','classroom'
+];
+
+const weekNames=[
+  'الأول','الثاني','الثالث','الرابع','الخامس',
+  'السادس','السابع','الثامن','التاسع','العاشر',
+  'الحادي عشر','الثاني عشر'
+];
+
+let activities=[];
+
+function newActivity(week){
+  return {
+    week,
+    time:'',
+    title:'',
+    goal:'',
+    description:'',
+    tools:'',
+    strategies:'',
+    evaluation:'',
+    classroom:''
+  };
+}
+
+/* تمدد الخانة حسب النص */
+function autoGrow(el){
+  el.style.height='auto';
+  el.style.height=Math.max(el.scrollHeight+2,66)+'px';
+}
+function growAll(){
+  document.querySelectorAll('#activities-body textarea').forEach(autoGrow);
+}
+window.addEventListener('resize',growAll);
+window.addEventListener('load',growAll);
+
+/* فقاعات الترحيب */
+function makeBubbles(container,n){
+  for(let i=0;i<n;i++){
+    const b=document.createElement('span');
+    const s=24+Math.random()*80;
+    b.className='bubble';
+    b.style.width=s+'px';
+    b.style.height=s+'px';
+    b.style.left=(Math.random()*100)+'%';
+    b.style.animationDuration=(7+Math.random()*9)+'s';
+    b.style.animationDelay=(-Math.random()*12)+'s';
+    container.appendChild(b);
+  }
+}
+makeBubbles(document.getElementById('welcome-modal'),18);
+
+/* زر بدء العمل */
+function beginWork(){
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  document.getElementById('welcome-modal')?.remove();
+  window.scrollTo(0,0);
+  growAll();
+}
+
+/* صوت الترحيب */
+function listenWelcome(){
+  if(!('speechSynthesis' in window)){
+    alert('المتصفح لا يدعم الصوت.');
+    return;
+  }
+  speechSynthesis.cancel();
+  const msg=new SpeechSynthesisUtterance(
+    'أهلاً وسهلاً بك أستاذة شيماء. نتمنى لك عملاً تربوياً ملهماً وخطة شهرية مليئة بالإبداع والإنجاز.'
+  );
+  msg.lang='ar';
+  msg.rate=.9;
+  speechSynthesis.speak(msg);
+}
+
+/* شاشة الاحتفال */
+function showCelebration(){
+  const screen=document.getElementById('celebration-screen');
+  screen.classList.add('show');
+  const emojis=['✨','🥳','❤‍🔥','💜','🌸','💗','🎉'];
+  for(let i=0;i<28;i++){
+    const c=document.createElement('span');
+    c.className='confetti';
+    c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    c.style.left=(Math.random()*100)+'%';
+    c.style.fontSize=(20+Math.random()*24)+'px';
+    c.style.animationDuration=(3+Math.random()*3)+'s';
+    c.style.animationDelay=(Math.random()*2)+'s';
+    screen.appendChild(c);
+  }
+}
+function closeCelebration(){
+  const screen=document.getElementById('celebration-screen');
+  screen.classList.remove('show');
+  screen.querySelectorAll('.confetti').forEach(c=>c.remove());
+}
+
+/* زر حفظ الخطة */
+function savePlan(){
+  saveData();
+  showCelebration();
+}
+
+/* إنشاء الأسابيع الأربعة الأولى */
+function makeInitial(){
+  const arr=[];
+  for(let w=1;w<=4;w++){
+    for(let i=0;i<5;i++) arr.push(newActivity(w));
+  }
+  return arr;
+}
+
+/* رسم الجدول مع دمج خلية الأسبوع */
+function renderTable(){
+  const body=document.getElementById('activities-body');
+  body.innerHTML='';
+
+  let index=0;
+
+  while(index<activities.length){
+    const week=activities[index].week;
+    let groupEnd=index;
+
+    while(
+      groupEnd<activities.length &&
+      activities[groupEnd].week===week
+    ){
+      groupEnd++;
+    }
+
+    const groupLength=groupEnd-index;
+
+    for(let i=index;i<groupEnd;i++){
+      const activity=activities[i];
+      const tr=document.createElement('tr');
+
+      const number=document.createElement('td');
+      number.className='number-cell';
+      number.textContent=i+1;
+      tr.appendChild(number);
+
+      // خلية الأسبوع تظهر مرة واحدة فقط لكل مجموعة
+      if(i===index){
+        const weekCell=document.createElement('td');
+        weekCell.className='week-cell';
+        weekCell.rowSpan=groupLength;
+        weekCell.textContent=weekNames[week-1] || String(week);
+        tr.appendChild(weekCell);
+      }
+
+      fields.forEach(field=>{
+        const td=document.createElement('td');
+        const wrap=document.createElement('div');
+        wrap.className='field-wrap';
+
+        const area=document.createElement('textarea');
+        area.value=activity[field]||'';
+        area.placeholder=placeholderFor(field);
+        area.setAttribute('aria-label',placeholderFor(field));
+
+        area.addEventListener('input',()=>{
+          activities[i][field]=area.value;
+          autoGrow(area);
+          saveData();
+        });
+
+        wrap.appendChild(area);
+
+        if(field!=='time'){
+          const mic=document.createElement('button');
+          mic.type='button';
+          mic.className='mic-btn';
+          mic.textContent='🎤';
+          mic.title='إملاء صوتي';
+          mic.addEventListener('click',()=>voiceInput(area,i,field));
+          wrap.appendChild(mic);
+        }
+
+        td.appendChild(wrap);
+        tr.appendChild(td);
+      });
+
+      const deleteCell=document.createElement('td');
+      deleteCell.className='delete-cell delete-col';
+      deleteCell.setAttribute('data-html2canvas-ignore','true');
+
+      const del=document.createElement('button');
+      del.className='delete-btn';
+      del.textContent='حذف';
+      del.onclick=()=>{
+        if(confirm('هل تريد حذف هذا النشاط؟')){
+          activities.splice(i,1);
+          renderTable();
+          saveData();
+        }
+      };
+      deleteCell.appendChild(del);
+      tr.appendChild(deleteCell);
+
+      body.appendChild(tr);
+    }
+
+    index=groupEnd;
+  }
+
+  growAll();
+}
+
+function placeholderFor(field){
+  const names={
+    time:'الوقت',
+    title:'اسم النشاط',
+    goal:'الهدف من النشاط',
+    description:'وصف النشاط وخطواته',
+    tools:'الأدوات والمواد',
+    strategies:'الاستراتيجيات',
+    evaluation:'أساليب التقويم',
+    classroom:'إدارة الصفوف'
+  };
+  return names[field]||'';
+}
+
+/* إضافة أسبوع كامل */
+function addWeek(){
+  const maxWeek=activities.length
+    ? Math.max(...activities.map(a=>Number(a.week)||1))
+    : 0;
+
+  const next=maxWeek+1;
+
+  for(let i=0;i<5;i++){
+    activities.push(newActivity(next));
+  }
+
+  renderTable();
+  saveData();
+
+  alert('تمت إضافة الأسبوع '+(weekNames[next-1]||next)+' بنجاح.');
+}
+
+/* إضافة نشاط إلى آخر أسبوع */
+function addActivity(){
+  const lastWeek=activities.length
+    ? activities[activities.length-1].week
+    : 1;
+
+  activities.push(newActivity(lastWeek));
+  renderTable();
+  saveData();
+}
+
+/* الإملاء الصوتي */
+function voiceInput(area,index,field){
+  // داخل تطبيق Android نستخدم نموذج Vosk العربي المحلي بعد تنزيله أول مرة.
+  if(window.AndroidVoice && typeof AndroidVoice.startRecognition==='function'){
+    AndroidVoice.startRecognition(index,field);
+    return;
+  }
+
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+  if(!Recognition){
+    alert('الإملاء الصوتي غير متاح في هذا المتصفح.');
+    return;
+  }
+
+  const rec=new Recognition();
+  rec.lang='ar';
+  rec.continuous=false;
+  rec.interimResults=false;
+
+  rec.onresult=(event)=>{
+    const words=event.results[0][0].transcript;
+    area.value+=(area.value?' ':'')+words;
+    activities[index][field]=area.value;
+    autoGrow(area);
+    saveData();
+  };
+
+  rec.onerror=()=>{
+    alert('تعذر تسجيل الصوت. تأكدي من السماح باستخدام الميكروفون.');
+  };
+
+  try{rec.start()}
+  catch(e){alert('تعذر بدء التسجيل. حاولي مرة أخرى.')}
+}
+
+/* يستقبل النص من محرك الإملاء المحلي في تطبيق Android */
+window.onNativeVoiceResult=function(index,field,words,isFinal){
+  const area=document.querySelector('textarea[data-activity-index="'+index+'"][data-field="'+field+'"]');
+  if(!area || !words) return;
+  if(isFinal){
+    area.value+=(area.value && !area.value.endsWith(' ')?' ':'')+words.trim();
+    if(activities[index]) activities[index][field]=area.value;
+    autoGrow(area);
+    saveData();
+  }
+};
+
+/* حفظ البيانات */
+function saveData(){
+  const data={
+    month:document.getElementById('month').value,
+    year:document.getElementById('year').value,
+    facilitator:document.getElementById('facilitator').value,
+    center:document.getElementById('center').value,
+    activities
+  };
+
+  try{
+    localStorage.setItem(KEY,JSON.stringify(data));
+    document.getElementById('save-status').textContent=
+      '✓ تم حفظ التعديلات تلقائياً';
+  }catch(e){
+    document.getElementById('save-status').textContent=
+      'تعذر الحفظ التلقائي على هذا الجهاز';
+  }
+}
+
+/* استعادة البيانات */
+function loadData(){
+  try{
+    const saved=localStorage.getItem(KEY);
+
+    if(saved){
+      const data=JSON.parse(saved);
+      document.getElementById('month').value=data.month||'';
+      document.getElementById('year').value=data.year||'';
+      document.getElementById('facilitator').value=
+        data.facilitator||'شيماء أحمد حمدي الشوا';
+      document.getElementById('center').value=data.center||'';
+      activities=Array.isArray(data.activities)
+        ? data.activities
+        : makeInitial();
+    }else{
+      activities=makeInitial();
+    }
+  }catch(e){
+    activities=makeInitial();
+  }
+
+  renderTable();
+}
+
+['month','year','facilitator','center'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',saveData);
+});
+
+/* تنزيل PDF مباشرة دون نافذة الطباعة */
+async function downloadPDF(){
+  if(window.AndroidVoice && typeof AndroidVoice.printPdf==='function'){
+    saveData();
+    AndroidVoice.printPdf();
+    return;
+  }
+  const button=document.getElementById('pdf-button');
+  const area=document.getElementById('pdf-area');
+
+  if(typeof html2pdf==='undefined'){
+    alert('تعذر تحميل مكتبة PDF. تأكدي من اتصال الإنترنت ثم أعيدي المحاولة.');
+    return;
+  }
+
+  saveData();
+  button.disabled=true;
+  button.textContent='⏳ جارٍ إنشاء ملف PDF...';
+
+  // تجهيز النصوص قبل التصوير حتى تظهر كاملة
+  const textareas=area.querySelectorAll('textarea');
+  const oldHeights=[];
+
+  textareas.forEach((el,i)=>{
+    oldHeights[i]=el.style.height;
+    el.style.height='auto';
+    el.style.height=Math.max(el.scrollHeight,55)+'px';
+  });
+
+  area.classList.add('pdf-mode');
+
+  const options={
+    margin:[7,7,7,7],
+    filename:'الخطة_الشهرية_للأنشطة_التربوية.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{
+      scale:2,
+      useCORS:true,
+      backgroundColor:'#ffffff',
+      scrollY:0,
+      windowWidth:1300
+    },
+    jsPDF:{
+      unit:'mm',
+      format:'a3',
+      orientation:'landscape'
+    },
+    pagebreak:{
+      mode:['css','legacy'],
+      avoid:['tr']
+    }
+  };
+
+  try{
+    await html2pdf().set(options).from(area).save();
+    document.getElementById('save-status').textContent=
+      '✓ تم إنشاء ملف PDF وتنزيله';
+  }catch(error){
+    alert('حدث خطأ أثناء إنشاء ملف PDF. حاولي مرة أخرى.');
+  }finally{
+    area.classList.remove('pdf-mode');
+    textareas.forEach((el,i)=>{
+      el.style.height=oldHeights[i];
+    });
+    growAll();
+    button.disabled=false;
+    button.textContent='⬇ حفظ كملف PDF';
+  }
+}
+
+/* بدء التشغيل */
+loadData();
+</script>
+</body>
+</html>
