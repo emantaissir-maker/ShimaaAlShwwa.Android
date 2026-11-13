@@ -1,4 +1,4 @@
-name: Build Simple Android APK
+name: Build Real Android APK
 
 on:
   push:
@@ -19,15 +19,118 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Create Web App Package
+    - name: Create Android Project Structure
       run: |
-        echo "Preparing web files for the app..."
-        mkdir -p app-output
-        cp index.html app-output/ || true
-        cp original-index.html app-output/ || true
+        mkdir -p app/src/main/assets
+        mkdir -p app/src/main/java/com/shimaa/app
+        mkdir -p app/src/main/res/values
 
-    - name: Upload Web Artifact
+        # نسخ ملفات الويب إلى مجلد الأصول (Assets)
+        cp index.html app/src/main/assets/ || true
+        cp original-index.html app/src/main/assets/ || true
+
+        # إنشاء ملف AndroidManifest.xml أساسي
+        cat << 'EOF' > app/src/main/AndroidManifest.xml
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+            package="com.shimaa.app">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <application
+                android:allowBackup="true"
+                android:icon="@mipmap/ic_launcher"
+                android:label="تطبيق عمتي شيماء"
+                android:roundIcon="@mipmap/ic_launcher_round"
+                android:supportsRtl="true"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+                <activity
+                    android:name=".MainActivity"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>
+                </activity>
+            </application>
+        </manifest>
+        EOF
+
+        # إنشاء ملف MainActivity.java لتشغيل صفحة الويب
+        cat << 'EOF' > app/src/main/java/com/shimaa/app/MainActivity.java
+        package com.shimaa.app;
+
+        import android.os.Bundle;
+        import android.webkit.WebSettings;
+        import android.webkit.WebView;
+        import android.webkit.WebViewClient;
+        import androidx.appcompat.app.AppCompatActivity;
+
+        public class MainActivity extends AppCompatActivity {
+            private WebView webView;
+
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                webView = new WebView(this);
+                WebSettings webSettings = webView.getSettings();
+                webSettings.setJavaScriptEnabled(true);
+                webSettings.setDomStorageEnabled(true);
+                webSettings.setAllowFileAccess(true);
+                webView.setWebViewClient(new WebViewClient());
+                webView.loadUrl("file:///android_asset/index.html");
+                setContentView(webView);
+            }
+
+            @Override
+            public void onBackPressed() {
+                if (webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    super.onBackPressed();
+                }
+            }
+        }
+        EOF
+
+        # إنشاء ملف build.gradle للتطبيق
+        cat << 'EOF' > app/build.gradle
+        plugins {
+            id 'com.android.application'
+        }
+        android {
+            namespace 'com.shimaa.app'
+            compileSdk 34
+            defaultConfig {
+                applicationId "com.shimaa.app"
+                minSdk 21
+                targetSdk 34
+                versionCode 1
+                versionName "1.0"
+            }
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_17
+                targetCompatibility JavaVersion.VERSION_17
+            }
+        }
+        dependencies {
+            implementation 'androidx.appcompat:appcompat:1.6.1'
+        }
+        EOF
+
+        # إعداد ملفات Gradle العامة للبناء
+        echo "include(':app')" > settings.gradle
+        echo "distributionBase=GRADLE_USER_HOME" > gradle.properties
+        echo "distributionPath=wrapper/dists" >> gradle.properties
+        echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip" >> gradle/wrapper/gradle.properties || mkdir -p gradle/wrapper && echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip" > gradle/wrapper/gradle.properties
+
+    - name: Build with Gradle
+      run: |
+        chmod +x gradlew || true
+        # إذا لم يكن gradle wrapper موجوداً، سنقوم بتثبيته أو استخدامه
+        gradle wrapper || true
+        ./gradlew assembleDebug || gradle assembleDebug
+
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: Shimaa-App-Package
-        path: app-output/
+        name: Shimaa-App-APK
+        path: |
+          app/build/outputs/apk/debug/*.apk
